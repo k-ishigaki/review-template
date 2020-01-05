@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/k-ishigaki/redpen-docker.git
+	branch = master
+	commit = 56f9bd84f5424b9146a72aa1c4543ae389e38ef0
+	parent = c9e29acd3fa07fab83d7a45b6602bc6a84023246
+	method = merge
+	cmdver = 0.4.0
