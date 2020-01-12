@@ -12,7 +12,7 @@
         <validator name="CommaNumber" />
         <validator name="SuccessiveWord" />
         <validator name="JavaScript" />
-        <validator name="DoubledJoshi" />
+        <validator name="DoubledConjunctiveParticleGa" />
         <validator name="DuplicatedSection" />
         <validator name="JapaneseStyle" />
         <validator name="DoubleNegative" />
