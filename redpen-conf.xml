@@ -3,13 +3,15 @@
         <validator name="SentenceLength">
             <property name="max_len" value="100"/>
         </validator>
-        <validator name="KatakanaSpellCheck"/>
+        <validator name="KatakanaEndHyphen" />
+        <validator name="KatakanaSpellCheck" />
         <validator name="SectionLength">
             <property name="max_num" value="1500"/>
         </validator>
         <validator name="ParagraphNumber"/>
-        <validator name="SpaceBetweenAlphabeticalWord" />
+        <validator name="InvalidExpression" />
         <validator name="CommaNumber" />
+        <validator name="SuggestExpression" />
         <validator name="SuccessiveWord" />
         <validator name="JavaScript" />
         <validator name="DoubledConjunctiveParticleGa" />
