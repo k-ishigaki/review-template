@@ -14,7 +14,8 @@ $ docker-compose up -d
 
 ```bash
 $ docker-compose exec main bash
-$ make
+$ cd src
+$ rake pdf
 ```
 
 ## Edit
