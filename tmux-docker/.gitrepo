@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/k-ishigaki/tmux-docker
+	branch = master
+	commit = 717e8b5ac6cc906be6d4e925648707213539abd8
+	parent = 56d265b958586287100f140b794cd8df20d40378
+	method = merge
+	cmdver = 0.4.3
