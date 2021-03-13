@@ -1,42 +1,76 @@
-version: "3"
-services:
-    redpen:
-        build:
-            context: ./redpen-docker
-        volumes:
-            - ./:/root/project_root
-            - tmp:/tmp
-        stdin_open: true
-
-    review:
-        build:
-            context: ./review-docker
-        volumes:
-            - ./:/root/project_root
-        stdin_open: true
-
-    docker-langserver:
-        image: rcjsuen/docker-langserver
-        volumes:
-            - ./:/root/project_root
-        stdin_open: true
-        entrypoint: /bin/ash
-
-    main:
-        build:
-            context: ./neovim-docker
-            args:
-                cmds:
-                    ${COMPOSE_PROJECT_NAME}_redpen_1:redpen
-                    ${COMPOSE_PROJECT_NAME}_review_1:rake
-                    ${COMPOSE_PROJECT_NAME}_docker-langserver_1:/docker-langserver/bin/docker-langserver
-        volumes:
-            - ./:/root/project_root
-            - /var/run/docker.sock:/var/run/docker.sock
-            - ./coc-settings.json:/root/.config/nvim/coc-settings.json
-            - tmp:/tmp
-        stdin_open: true
-        working_dir: /root/project_root
+version: "3.0"
 
 volumes:
+    shared_bin:
     tmp:
+    vscode-server:
+
+x-common-options: &common-options
+    user: ${UID:-0}:${GID:-0}
+    depends_on:
+        - scripts
+    environment:
+        COMPOSE_PROJECT_NAME: ${COMPOSE_PROJECT_NAME:-review-template}
+        MOUNT_WAIT_COMMAND: until [ -d .devcontainer ]; do :; done
+        LAUNCH_COMMAND: >-
+            find /root/shared_bin/* | xargs -I {} basename {} | xargs -I {} sh -c '
+            if ! command -v {}; then sudo cp /root/shared_bin/{} /usr/local/bin/{} && sudo chmod +s /usr/local/bin/{}; fi
+            ' &&
+            sleep infinity
+    volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+        - ${PROJECT_ROOT:-/var/lib/docker/volumes/vsc-remote-containers/_data/review-template}/:/workspaces/review-template
+        - shared_bin:/root/shared_bin
+        - tmp:/tmp
+        - vscode-server:/root/.vscode-server/bin
+    working_dir: /workspaces/review-template
+    command: sh -c 'eval $${MOUNT_WAIT_COMMAND} && eval $${LAUNCH_COMMAND}'
+
+services:
+    docker:
+        build: ./.devcontainer/docker-docker
+        volumes:
+            - shared_bin:/root/shared_bin
+        command: sh -c 'cp -f `which docker` /root/shared_bin/docker && sleep infinity'
+
+    scripts:
+        image: bash
+        <<: *common-options
+        depends_on:
+            - docker
+        user: root # needed for generate_docker_cmd.sh
+        command: >-
+            sh -c '
+            eval $${MOUNT_WAIT_COMMAND} &&
+            bash .devcontainer/generate_docker_cmd.sh /root/shared_bin
+            nvim@$${COMPOSE_PROJECT_NAME}_neovim_1
+            tmux@$${COMPOSE_PROJECT_NAME}_tmux_1
+            fish@$${COMPOSE_PROJECT_NAME}_tmux_1
+            redpen@$${COMPOSE_PROJECT_NAME}_redpen_1
+            rake@$${COMPOSE_PROJECT_NAME}_review_1
+            '
+
+    redpen:
+        build: ./.devcontainer/redpen-docker
+        <<: *common-options
+
+    review:
+        build: ./.devcontainer/review-docker
+        <<: *common-options
+
+    tmux:
+        build: ./.devcontainer/tmux-docker
+        <<: *common-options
+
+    neovim:
+        build:
+            context: ./.devcontainer/neovim-docker
+            args:
+                EXTRA_COC_PLUGINS: coc-docker
+        <<: *common-options
+        command: >-
+            sh -c '
+            eval $${MOUNT_WAIT_COMMAND} &&
+            cp .devcontainer/coc-settings.json /root/.config/nvim/coc-settings.json &&
+            eval $${LAUNCH_COMMAND}
+            '
