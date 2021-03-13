@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://github.com/k-ishigaki/redpen-docker.git
 	branch = master
-	commit = 2bb547093c985278bf0dd8ca96019a5a0b6a24a6
-	parent = 91150c415c451c975d5a58873e0876e4b8965053
+	commit = 58a94b115347a07b1b08e089afd3b6a74b64f14f
+	parent = dedde7bf1ec2410cc6d68bf4745e003b22c7a766
 	method = merge
-	cmdver = 0.4.0
+	cmdver = 0.4.3
