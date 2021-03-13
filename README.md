@@ -2,7 +2,8 @@
 
 ## Requrements
 
-- [Docker Desktop for Windows / Mac](https://www.docker.com/products/docker-desktop)
+- Docker
+- Docker Compose (Version 1.21 or above)
 
 ## Setup
 
@@ -13,7 +14,7 @@ $ docker-compose up -d
 ## Build
 
 ```bash
-$ docker-compose exec main bash
+$ docker-compose exec tmux fish
 $ cd src
 $ rake pdf
 ```
@@ -21,7 +22,7 @@ $ rake pdf
 ## Edit
 
 ```bash
-$ docker-compose exec main bash
+$ docker-compose exec tmux fish
 $ nvim src/preface.re
 ```
 
