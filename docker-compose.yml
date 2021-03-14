@@ -13,7 +13,7 @@ x-common-options: &common-options
         COMPOSE_PROJECT_NAME: ${COMPOSE_PROJECT_NAME:-review-template}
         MOUNT_WAIT_COMMAND: until [ -d .devcontainer ]; do :; done
         LAUNCH_COMMAND: >-
-            find /root/shared_bin/* | xargs -I {} basename {} | xargs -I {} sh -c '
+            sudo find /root/shared_bin/ -type f | xargs -I {} basename {} | xargs -I {} sh -c '
             if ! command -v {}; then sudo cp /root/shared_bin/{} /usr/local/bin/{} && sudo chmod +s /usr/local/bin/{}; fi
             ' &&
             sleep infinity
@@ -45,6 +45,8 @@ services:
             bash .devcontainer/generate_docker_cmd.sh /root/shared_bin
             nvim@$${COMPOSE_PROJECT_NAME}_neovim_1
             tmux@$${COMPOSE_PROJECT_NAME}_tmux_1
+            git@$${COMPOSE_PROJECT_NAME}_git_1
+            git-shell@$${COMPOSE_PROJECT_NAME}_git_1
             fish@$${COMPOSE_PROJECT_NAME}_tmux_1
             redpen@$${COMPOSE_PROJECT_NAME}_redpen_1
             rake@$${COMPOSE_PROJECT_NAME}_review_1
@@ -68,6 +70,10 @@ services:
 
     tmux:
         build: ./.devcontainer/tmux-docker
+        <<: *common-options
+
+    git:
+        build: ./.devcontainer/git-docker
         <<: *common-options
 
     neovim:
