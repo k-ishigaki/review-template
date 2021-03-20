@@ -20,10 +20,20 @@
     // Set *default* container specific settings.json values on container create.
     "settings": {
         "terminal.integrated.shell.linux": "fish",
+        "textlint.languages": [
+            "markdown",
+            "plaintext",
+            "html",
+            "tex",
+            "latex",
+            "doctex",
+            "review",
+        ]
     },
 
     // Add the IDs of extensions you want installed when the container is created.
     "extensions": [
         "atsushieno.language-review",
+        "taichi.vscode-textlint",
     ],
 }
