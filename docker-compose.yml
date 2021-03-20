@@ -48,13 +48,20 @@ services:
             git@$${COMPOSE_PROJECT_NAME}_git_1
             git-shell@$${COMPOSE_PROJECT_NAME}_git_1
             fish@$${COMPOSE_PROJECT_NAME}_tmux_1
-            redpen@$${COMPOSE_PROJECT_NAME}_redpen_1
             rake@$${COMPOSE_PROJECT_NAME}_review_1
+            npm@$${COMPOSE_PROJECT_NAME}_node_1
+            npx@$${COMPOSE_PROJECT_NAME}_node_1
             '
 
-    redpen:
-        build: ./.devcontainer/redpen-docker
+    node:
+        build: ./.devcontainer/node-docker
         <<: *common-options
+        command: >-
+            sh -c '
+            eval $${MOUNT_WAIT_COMMAND} &&
+            npm install &&
+            eval $${LAUNCH_COMMAND}
+            '
 
     review:
         build: ./.devcontainer/review-docker
