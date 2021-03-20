@@ -1,33 +1,56 @@
-# [Re:VIEW](https://reviewml.org/ja/) Publishing Environment
+# [Re:VIEW](https://reviewml.org/ja/)執筆環境
 
-## Requrements
+Re:VIEWによる日本語の技術書の執筆環境です．
 
-- Docker
-- Docker Compose (Version 1.21 or above)
+## 必要なもの
 
-## Setup
+* Git
+* Docker（WindowsまたはMacのDocker DesktopでもOK）
+    * daemon  
+        `docker context`コマンドでリモートのDocker Daemonを使うこともできます．
+    * client
+    * Compose (__Version 1.21以上__)
+* Visual Studio Code  
+    * Remote Container plugin
 
-```bash
-$ docker-compose up -d
-```
+## 特徴
 
-## Build
+* Docker上で動作するため，ローカルの環境を汚さずに使用できる
+* VS Code（GUI）で使える
+* [textlint](https://github.com/textlint/textlint)による文書校正が利用できる
 
-```bash
-$ docker-compose exec tmux fish
-$ cd src
-$ rake pdf
-```
+## 使い方
 
-## Edit
+### `Clone Repository in Container Volume`（推奨）
 
-```bash
-$ docker-compose exec tmux fish
-$ nvim src/preface.re
-```
+1. VS Codeを起動し，`Remote-Containers: Clone Repository in Container Volume...`コマンドを実行
+  パラメータは以下を指定してください．
+  * Repository url: https://github.com/k-ishigaki/review-template
+  * Volume name: `vsc-remote-containers`
+  * Target folder name: `review-template`
+2. src/src.reを開いて編集
+  `review: Show preview`コマンドでプレビューを見ながら編集できます．
+3. `Ctrl + Shift + B`または`⌘ + Shift + B`でビルド  
+  srcディレクトリ配下にbook.pdfが生成されます．
 
-## Uninstall
+### `Reopen in Container`
 
-```bash
-$ docker-compose down --rmi all --volume
-```
+注意：この方法はリモートのDocker Daemonでは使用できません．
+
+1. 本リポジトリをダウンロードし，VS Codeで開く
+2. （Linuxの場合）.envファイルを編集し，UIDとGIDの値を使用するユーザーと合わせる
+3. `Remote-Containers: Reopen in Container`コマンドを実行
+4. src/src.reを開いて編集  
+  `review: Show preview`コマンドでプレビューを見ながら編集できます．
+5. `Ctrl + Shift + B`または`⌘ + Shift + B`でビルド  
+  srcディレクトリ配下にbook.pdfが生成されます．
+
+## 構成
+
+* src：Re:VIEWのソースコード
+* .textlintrc：textlintのルール定義
+* prh.yml：prhのルール定義
+
+## 制限事項
+
+ビルドしたbook.pdfを選ぶとPDFのプレビューが表示されますが，日本語が表示されません．（割と致命的……）
