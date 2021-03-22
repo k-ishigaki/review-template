@@ -35,6 +35,6 @@
     "extensions": [
         "atsushieno.language-review",
         "taichi.vscode-textlint",
-        "tomoki1207.pdf",
+        "James-Yu.latex-workshop",
     ],
 }

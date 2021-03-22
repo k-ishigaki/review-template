@@ -50,7 +50,3 @@ Re:VIEWによる日本語の技術書の執筆環境です．
 * src：Re:VIEWのソースコード
 * .textlintrc：textlintのルール定義
 * prh.yml：prhのルール定義
-
-## 制限事項
-
-ビルドしたbook.pdfを選ぶとPDFのプレビューが表示されますが，日本語が表示されません．（割と致命的……）
