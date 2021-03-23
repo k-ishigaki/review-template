@@ -56,16 +56,15 @@ services:
     node:
         build: ./.devcontainer/node-docker
         <<: *common-options
+        # Install textlint packages.
+        # Packages are configured in ./package.json.
         command: >-
-            sh -c '
-            eval $${MOUNT_WAIT_COMMAND} &&
-            npm install &&
-            eval $${LAUNCH_COMMAND}
-            '
+            sh -c 'eval $${MOUNT_WAIT_COMMAND} && npm install && eval $${LAUNCH_COMMAND}'
 
     review:
         build: ./.devcontainer/review-docker
         <<: *common-options
+        # Change owner of VS Code's directory.
         command: >-
             sh -c '
             eval $${MOUNT_WAIT_COMMAND} &&
