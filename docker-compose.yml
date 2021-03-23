@@ -43,14 +43,14 @@ services:
             sh -c '
             eval $${MOUNT_WAIT_COMMAND} &&
             bash .devcontainer/generate_docker_cmd.sh /root/shared_bin
-            nvim@$${COMPOSE_PROJECT_NAME}_neovim_1
-            tmux@$${COMPOSE_PROJECT_NAME}_tmux_1
-            git@$${COMPOSE_PROJECT_NAME}_git_1
-            git-shell@$${COMPOSE_PROJECT_NAME}_git_1
-            fish@$${COMPOSE_PROJECT_NAME}_tmux_1
-            rake@$${COMPOSE_PROJECT_NAME}_review_1
-            npm@$${COMPOSE_PROJECT_NAME}_node_1
-            npx@$${COMPOSE_PROJECT_NAME}_node_1
+            nvim@neovim
+            tmux@tmux
+            git@git
+            git-shell@git
+            fish@tmux
+            rake@review
+            npm@node
+            npx@node
             '
 
     node:
