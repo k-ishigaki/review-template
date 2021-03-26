@@ -1,6 +1,7 @@
 # [Re:VIEW](https://reviewml.org/ja/)執筆環境
 
-Re:VIEWによる日本語の技術書の執筆環境です．
+Re:VIEWによる日本語の技術書の執筆環境です．  
+開発環境とソースコードがこのリポジトリ1つにまとまっているため，すぐに執筆を開始できます．
 
 ## 必要なもの
 
@@ -23,12 +24,12 @@ Re:VIEWによる日本語の技術書の執筆環境です．
 
 ### `Clone Repository in Container Volume`（推奨）
 
-1. VS Codeを起動し，`Remote-Containers: Clone Repository in Container Volume...`コマンドを実行
+1. VS Codeを起動し，`Remote-Containers: Clone Repository in Container Volume...`コマンドを実行  
   パラメータは以下を指定してください．
   * Repository url: https://github.com/k-ishigaki/review-template
   * Volume name: `vsc-remote-containers`
   * Target folder name: `review-template`
-2. src/src.reを開いて編集
+2. src/src.reを開いて編集  
   `review: Show preview`コマンドでプレビューを見ながら編集できます．
 3. `Ctrl + Shift + B`または`⌘ + Shift + B`でビルド  
   srcディレクトリ配下にbook.pdfが生成されます．
@@ -48,5 +49,6 @@ Re:VIEWによる日本語の技術書の執筆環境です．
 ## 構成
 
 * src：Re:VIEWのソースコード
-* .textlintrc：textlintのルール定義
+* .textlintrc.yml：textlintのルール定義
+* allow.yml：textlintで無視したいパターン定義
 * prh.yml：prhのルール定義
