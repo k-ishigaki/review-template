@@ -1,0 +1,6 @@
+version: "3.4"
+
+services:
+    neovim:
+        environment:
+            EXTRA_COC_PLUGINS: coc-docker
