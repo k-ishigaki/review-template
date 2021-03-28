@@ -1,3 +1,4 @@
+\ProvidesClass{review-base}[2020/12/31]
 \RequirePackage{ifthen}
 \@ifundefined{Hy@Info}{% for jsbook.cls
   \RequirePackage[dvipdfmx,bookmarks=true,bookmarksnumbered=true]{hyperref}
@@ -47,24 +48,17 @@
 
 \long\def\review@ifempty#1{\expandafter\ifx\expandafter\relax\detokenize{#1}\relax\expandafter\@firstoftwo\else\expandafter\@secondoftwo\fi}
 
+%% pass bbox setting to extractbb of graphicx
+\ifdefined\review@bbox
+  \def\Gin@pagebox{\review@bbox}
+\fi
+
 \newenvironment{shadedb}{%
   \def\FrameCommand{\fboxsep=\FrameSep \colorbox{shadecolorb}}%
   \MakeFramed {\FrameRestore}}%
  {\endMakeFramed}
 
 \newcommand{\parasep}{\vspace*{3zh}}
-
-\newcommand*\PDFDocumentInformation[1]{%
-  \AtBeginShipoutFirst{\special{pdf:docinfo <<#1>>}}}
-\@onlypreamble\PDFDocumentInformation
-
-\PDFDocumentInformation{
-  /Title    (\review@booktitlename)
-  /Author   (\review@autnames)
-  % /Subject  ()
-  % /Keywords (,,)
-  /Creator  (Re:VIEW \review@reviewversion, with LaTeX)
-}
 
 \RequirePackage{pxrubrica}
 \@ifpackagelater{pxrubrica}{2017/04/20}{%
@@ -204,9 +198,10 @@
 \newcommand{\reviewtableref}[2]{\review@intn@table #1}
 \newcommand{\reviewlistref}[1]{\review@intn@list #1}
 \newcommand{\reviewequationref}[1]{\review@intn@equation #1}
-\newcommand{\reviewbibref}[2]{#1}
-\newcommand{\reviewcolumnref}[2]{#1}
-\newcommand{\reviewsecref}[2]{#1}
+\newcommand{\reviewbibref}[2]{\hyperref[#2]{#1}}
+\newcommand{\reviewcolumnref}[2]{#1}% XXX:ハイパーリンクにはreviewcolumn側の調整が必要
+\newcommand{\reviewchapref}[2]{\hyperref[#2]{#1}}
+\newcommand{\reviewsecref}[2]{\hyperref[#2]{#1}}
 
 \newenvironment{reviewpart}{%
 \setcounter{section}{0}%
@@ -267,6 +262,16 @@
 
 % allow break line in tt
 % contributed by @zr_tex8r
+\g@addto@macro\pdfstringdefPreHook{% for PDF bookmarks
+  \def\reviewami#1{#1}
+  \def\reviewbreakall#1{#1}
+  \def\reviewballoon#1{#1}
+  \def\reviewbou#1{#1}
+  \def\reviewkw#1{#1}
+  \def\reviewinsert#1{#1}
+  \def\reviewstrike#1{#1}
+  \def\reviewunderline#1{#1}
+}
 \newif\ifreview@ba@break
 \def\review@ba@end{\review@ba@end@}
 \DeclareRobustCommand{\reviewbreakall}[1]{%
@@ -318,14 +323,10 @@
 
 \DeclareRobustCommand{\reviewbou}[1]{\kenten{#1}}
 
-%% @<del> is ignored in LaTeX with default style
-\DeclareRobustCommand{\reviewstrike}[1]{#1}
-
+\DeclareRobustCommand{\reviewinsert}[1]{\Underline{#1}}
+\DeclareRobustCommand{\reviewstrike}[1]{\Midline{#1}}
 %%%% for ulem.sty:
 %%\renewcommand{\reviewstrike}[1]{\sout{#1}}
-%%
-%%%% for jumoline.sty:
-%%\renewcommand{\reviewstrike}[1]{\Middleline{#1}}
 
 \newcommand{\reviewth}[1]{\textgt{#1}}
 \newcommand{\reviewtitlefont}[0]{\usefont{T1}{phv}{b}{n}\gtfamily}
@@ -361,6 +362,28 @@
 \fi
 \ifdefined\appendixname
   \renewcommand{\appendixname}{\reviewappendixname}
+\fi
+
+% PDF meta information
+\def\recls@tmp{ebook}\ifx\recls@cameraready\recls@tmp
+\hypersetup{
+    pdftitle={\review@booktitlename},
+    pdfauthor={\ifdefined\review@autnames\review@autnames\fi},
+    pdfcreator={Re:VIEW \review@reviewversion, with LaTeX}
+  }
+\else
+\newcommand*\PDFDocumentInformation[1]{%
+  \AtBeginShipoutFirst{\special{pdf:docinfo <<#1>>}}}
+\@onlypreamble\PDFDocumentInformation
+
+% for non hyperref. escaped character will be displayed funny...
+\PDFDocumentInformation{
+  /Title    (\review@booktitlename)
+  \ifdefined\review@autnames /Author   (\review@autnames)\fi
+  % /Subject  ()
+  % /Keywords (,,)
+  /Creator  (Re:VIEW \review@reviewversion, with LaTeX)
+}
 \fi
 
 %% maxwidth is the original width if it is less than linewidth
@@ -407,6 +430,9 @@
 
 \if@reclscover
   \ifdefined\review@coverimage
+    \ifrecls@coverfitpage
+       \def\review@coverimageoption{width=\paperwidth,height=\paperheight}
+    \fi
     \def\reviewcoverpagecont{%
       \expandafter\includefullpagegraphics\expandafter[\review@coverimageoption]{\review@coverimage}
       \cleardoublepage

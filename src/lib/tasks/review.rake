@@ -1,4 +1,4 @@
-# Copyright (c) 2006-2019 Minero Aoki, Kenshi Muto, Masayoshi Takahashi, Masanori Kado.
+# Copyright (c) 2006-2021 Minero Aoki, Kenshi Muto, Masayoshi Takahashi, Masanori Kado.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,16 @@ WEBROOT = ENV['REVIEW_WEBROOT'] || 'webroot'
 TEXTROOT = BOOK + '-text'
 TOPROOT = BOOK + '-text'
 IDGXMLROOT = BOOK + '-idgxml'
+PDF_OPTIONS = ENV['REVIEW_PDF_OPTIONS'] || ''
+EPUB_OPTIONS = ENV['REVIEW_EPUB_OPTIONS'] || ''
+WEB_OPTIONS = ENV['REVIEW_WEB_OPTIONS'] || ''
 IDGXML_OPTIONS = ENV['REVIEW_IDGXML_OPTIONS'] || ''
+TEXT_OPTIONS = ENV['REVIEW_TEXT_OPTIONS'] || ''
+
+REVIEW_VSCLI = ENV['REVIEW_VSCLI'] || 'vivliostyle'
+REVIEW_VSCLI_USESANDBOX = ENV['REVIEW_VSCLI_USESANDBOX'] ? '' : '--no-sandbox'
+REVIEW_VSCLI_PDF = ENV['REVIEW_VSCLI_PDF'] || BOOK_PDF
+REVIEW_VSCLI_OPTIONS = ENV['REVIEW_VSCLI_OPTIONS'] || ''
 
 def build(mode, chapter)
   sh("review-compile --target=#{mode} --footnotetext --stylesheet=style.css #{chapter} > tmp")
@@ -76,12 +85,12 @@ task web: WEBROOT
 
 desc 'generate text file (without decoration)'
 task plaintext: TEXTROOT do
-  sh "review-textmaker -n #{CONFIG_FILE}"
+  sh "review-textmaker #{TEXT_OPTIONS} -n #{CONFIG_FILE}"
 end
 
 desc 'generate (decorated) text file'
 task text: TOPROOT do
-  sh "review-textmaker #{CONFIG_FILE}"
+  sh "review-textmaker #{TEXT_OPTIONS} #{CONFIG_FILE}"
 end
 
 desc 'generate IDGXML file'
@@ -100,17 +109,17 @@ SRC_PDF = FileList['layouts/*.erb', 'sty/**/*.sty']
 
 file BOOK_PDF => SRC + SRC_PDF do
   FileUtils.rm_rf([BOOK_PDF, BOOK, BOOK + '-pdf'])
-  sh "review-pdfmaker #{CONFIG_FILE}"
+  sh "review-pdfmaker #{PDF_OPTIONS} #{CONFIG_FILE}"
 end
 
 file BOOK_EPUB => SRC + SRC_EPUB do
   FileUtils.rm_rf([BOOK_EPUB, BOOK, BOOK + '-epub'])
-  sh "review-epubmaker #{CONFIG_FILE}"
+  sh "review-epubmaker #{EPUB_OPTIONS} #{CONFIG_FILE}"
 end
 
 file WEBROOT => SRC do
   FileUtils.rm_rf([WEBROOT])
-  sh "review-webmaker #{CONFIG_FILE}"
+  sh "review-webmaker #{WEB_OPTIONS} #{CONFIG_FILE}"
 end
 
 file TEXTROOT => SRC do
@@ -120,5 +129,16 @@ end
 file IDGXMLROOT => SRC do
   FileUtils.rm_rf([IDGXMLROOT])
 end
+
+desc 'run vivliostyle'
+task 'vivliostyle:preview': BOOK_EPUB do
+  sh "#{REVIEW_VSCLI} preview #{REVIEW_VSCLI_USESANDBOX} #{REVIEW_VSCLI_OPTIONS} #{BOOK_EPUB}"
+end
+
+task 'vivliostyle:build': BOOK_EPUB do
+  sh "#{REVIEW_VSCLI} build #{REVIEW_VSCLI_USESANDBOX} #{REVIEW_VSCLI_OPTIONS} -o #{REVIEW_VSCLI_PDF} #{BOOK_EPUB}"
+end
+
+task vivliostyle: 'vivliostyle:build'
 
 CLEAN.include([BOOK, BOOK_PDF, BOOK_EPUB, BOOK + '-pdf', BOOK + '-epub', WEBROOT, 'images/_review_math', 'images/_review_math_text', TEXTROOT, IDGXMLROOT])

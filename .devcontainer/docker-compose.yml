@@ -49,6 +49,7 @@ services:
             git-shell@git
             fish@tmux
             rake@review
+            review-update@review
             npm@node
             npx@node
             '
