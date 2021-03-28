@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://github.com/k-ishigaki/review-docker.git
 	branch = master
-	commit = 8b5e5481901a2019c3825b689c701995a6e036d6
-	parent = 246c52f3086bfa2763a04478f9408c37e8485fda
+	commit = 5dd196ea2e4fc1dd1b9f63e1d9193dc415717808
+	parent = 1d66ad8899b97f9f3d534aca8d281d38d550e237
 	method = merge
 	cmdver = 0.4.3
