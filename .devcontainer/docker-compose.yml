@@ -6,11 +6,11 @@ volumes:
     vscode-server:
 
 x-common-options: &common-options
-    user: ${UID:-0}:${GID:-0}
+    user: ${UID}:${GID}
     depends_on:
         - scripts
     environment:
-        COMPOSE_PROJECT_NAME: ${COMPOSE_PROJECT_NAME:-review-template}
+        COMPOSE_PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
         MOUNT_WAIT_COMMAND: until [ -d .devcontainer ]; do :; done
         LAUNCH_COMMAND: >-
             sudo find /root/shared_bin/ -type f | xargs -I {} basename {} | xargs -I {} sh -c '
@@ -19,11 +19,11 @@ x-common-options: &common-options
             sleep infinity
     volumes:
         - /var/run/docker.sock:/var/run/docker.sock
-        - ${PROJECT_ROOT:-/var/lib/docker/volumes/vsc-remote-containers/_data/review-template}/:/workspaces/review-template
+        - ${WORKSPACE_ROOT}/${COMPOSE_PROJECT_NAME}:/workspaces/${COMPOSE_PROJECT_NAME}
         - shared_bin:/root/shared_bin
         - tmp:/tmp
         - vscode-server:/root/.vscode-server/bin
-    working_dir: /workspaces/review-template
+    working_dir: /workspaces/${COMPOSE_PROJECT_NAME}
     command: sh -c 'eval $${MOUNT_WAIT_COMMAND} && eval $${LAUNCH_COMMAND}'
 
 services:
@@ -65,15 +65,6 @@ services:
     review:
         build: ./review-docker
         <<: *common-options
-        # Change owner of VS Code's directory.
-        command: >-
-            sh -c '
-            eval $${MOUNT_WAIT_COMMAND} &&
-            sudo chown `id -u`:`id -g` /root/.vscode-server &&
-            sudo chown `id -u`:`id -g` /root/.vscode-server/bin &&
-            sudo usermod --shell /usr/local/bin/fish `whoami` &&
-            eval $${LAUNCH_COMMAND}
-            '
 
     tmux:
         build: ./tmux-docker

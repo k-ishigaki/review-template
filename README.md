@@ -22,8 +22,6 @@ Re:VIEWによる日本語の技術書の執筆環境です．
 
 ## 使い方
 
-### `Clone Repository in Container Volume`（推奨）
-
 1. VS Codeを起動し，`Remote-Containers: Clone Repository in Container Volume...`コマンドを実行  
   パラメータは以下を指定してください．
   * Repository url: https://github.com/k-ishigaki/review-template
@@ -32,18 +30,6 @@ Re:VIEWによる日本語の技術書の執筆環境です．
 2. src/src.reを開いて編集  
   `review: Show preview`コマンドでプレビューを見ながら編集できます．
 3. `Ctrl + Shift + B`または`⌘ + Shift + B`でビルド  
-  srcディレクトリ配下にbook.pdfが生成されます．
-
-### `Reopen in Container`
-
-注意：この方法はリモートのDocker Daemonでは使用できません．
-
-1. 本リポジトリをダウンロードし，VS Codeで開く
-2. （Linuxの場合）.envファイルを編集し，UIDとGIDの値を使用するユーザーと合わせる
-3. `Remote-Containers: Reopen in Container`コマンドを実行
-4. src/src.reを開いて編集  
-  `review: Show preview`コマンドでプレビューを見ながら編集できます．
-5. `Ctrl + Shift + B`または`⌘ + Shift + B`でビルド  
   srcディレクトリ配下にbook.pdfが生成されます．
 
 ## 構成
