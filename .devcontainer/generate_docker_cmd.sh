@@ -14,9 +14,9 @@ function output_cmd () {
     { \
         echo '#!/bin/sh -e'; \
         echo 'if [ -t 1 ]; then'; \
-        echo '    exec docker exec -it -w $PWD '"${COMPOSE_PROJECT_NAME}_${service_name}_1 ${command_path}"' "$@"'; \
+        echo '    exec docker exec -it -w $PWD '"${compose_project_name}_${service_name}_1 ${command_path}"' "$@"'; \
         echo 'else'; \
-        echo '    exec docker exec -i -w $PWD '"${COMPOSE_PROJECT_NAME}_${service_name}_1 ${command_path}"' "$@"'; \
+        echo '    exec docker exec -i -w $PWD '"${compose_project_name}_${service_name}_1 ${command_path}"' "$@"'; \
         echo 'fi'; \
     } > ${output_dir}/${command_name}
 chmod +x ${output_dir}/${command_name}
@@ -31,7 +31,9 @@ fi
 
 output_dir=$1
 args=( ${@:2} ) # exclude first element
-echo "output_dir = ${output_dir}, arguments = ${args[@]}"
+self_container_name=$(docker inspect -f '{{ .Name }}' $(hostname) | cut -c 2-)
+compose_project_name=$(echo $self_container_name | sed -r 's/^(.+)_[^_]+_\d+/\1/')
+echo "output_dir = ${output_dir}, arguments = ${args[@]}, compose_project_name = ${compose_project_name}"
 
 for arg in "${args[@]}"; do
     output_cmd ${output_dir} ${arg}

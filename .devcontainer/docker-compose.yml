@@ -10,11 +10,10 @@ x-common-options: &common-options
     depends_on:
         - scripts
     environment:
-        COMPOSE_PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
         MOUNT_WAIT_COMMAND: until [ -d .devcontainer ]; do :; done
         LAUNCH_COMMAND: >-
             sudo find /root/shared_bin/ -type f | xargs -I {} basename {} | xargs -I {} sh -c '
-            if ! command -v {}; then sudo cp /root/shared_bin/{} /usr/local/bin/{} && sudo chmod +s /usr/local/bin/{}; fi
+            if ! command -v {}; then sudo cp -f /root/shared_bin/{} /usr/local/bin/{} && sudo chmod +s /usr/local/bin/{}; fi
             ' &&
             sleep infinity
     volumes:
@@ -42,6 +41,7 @@ services:
         command: >-
             sh -c '
             eval $${MOUNT_WAIT_COMMAND} &&
+            cp -f /root/shared_bin/docker /usr/local/bin/ &&
             bash .devcontainer/generate_docker_cmd.sh /root/shared_bin
             nvim@neovim
             tmux@tmux
