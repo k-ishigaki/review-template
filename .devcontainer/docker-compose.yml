@@ -11,7 +11,7 @@ x-common-options: &common-options
     environment:
         MOUNT_WAIT_COMMAND: until [ -d /root/.vscode-server ]; do :; done
         LAUNCH_COMMAND: >-
-            sudo find /tmp/shared_bin/ -type f | xargs -I {} basename {} | xargs -I {} sh -c '
+            sudo find /tmp/shared_bin/ -type f | xargs -I {} basename {} | xargs -I {} sh -cex '
             if ! command -v {}; then sudo cp -f /tmp/shared_bin/{} /usr/local/bin/{} && sudo chmod +s /usr/local/bin/{}; fi
             ' &&
             sleep infinity
@@ -21,14 +21,14 @@ x-common-options: &common-options
         - tmp:/tmp
         - vscode-server:/root/.vscode-server/bin
     working_dir: /workspaces/${PROJECT_FOLDER}
-    command: sh -c 'eval $${MOUNT_WAIT_COMMAND} && eval $${LAUNCH_COMMAND}'
+    command: sh -cex 'eval $${MOUNT_WAIT_COMMAND} && eval $${LAUNCH_COMMAND}'
 
 services:
     docker:
         build: ./docker-docker
         volumes:
             - tmp:/tmp
-        command: sh -c 'mkdir -p /tmp/shared_bin && cp -f `which docker` /tmp/shared_bin/docker && sleep infinity'
+        command: sh -cex 'mkdir -p /tmp/shared_bin && cp -f `which docker` /tmp/shared_bin/docker && sleep infinity'
 
     scripts:
         image: bash
@@ -37,7 +37,7 @@ services:
             - docker
         user: root # needed for generate_docker_cmd.sh
         command: >-
-            sh -c '
+            sh -cex '
             eval $${MOUNT_WAIT_COMMAND} &&
             cp -f /tmp/shared_bin/docker /usr/local/bin/ &&
             bash .devcontainer/generate_docker_cmd.sh /tmp/shared_bin
@@ -54,14 +54,16 @@ services:
 
     node:
         build: ./node-docker
+        image: splascope/node-docker
         <<: *common-options
         # Install textlint packages.
         # Packages are configured in ./package.json.
         command: >-
-            sh -c 'eval $${MOUNT_WAIT_COMMAND} && npm install && eval $${LAUNCH_COMMAND}'
+            sh -cex 'eval $${MOUNT_WAIT_COMMAND} && npm install && eval $${LAUNCH_COMMAND}'
 
     review:
         build: ./review-docker
+        image: splascope/review-docker
         <<: *common-options
         command:
             - sh
