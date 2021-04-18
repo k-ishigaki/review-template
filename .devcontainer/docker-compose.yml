@@ -71,10 +71,12 @@ services:
             - |
               sudo chown -R `id -u`:`id -g` /root
               eval $${MOUNT_WAIT_COMMAND}
-              cp -fp .env .env.org
               # prepare variables
               container_volume_name=`/root/shared_bin/docker inspect --format='{{ index .Config.Labels "vsch.local.repository.volume"}}' $$HOSTNAME`
-              project_folder_name=`basename $$PWD`
+              project_folder_name=`/root/shared_bin/docker inspect --format='{{ index .Config.Labels "vsch.local.repository.folder"}}' $$HOSTNAME`
+              cd ../$$project_folder_name
+              # modify .env
+              cp -fp .env .env.org
               # modify WORKSPACE_ROOT
               if [ -n $$container_volume_name ]; then
               sed -i -r 's/^(WORKSPACE_ROOT=).+$$/\1\/var\/lib\/docker\/volumes\/'"$$container_volume_name"'\/_data/' .env
