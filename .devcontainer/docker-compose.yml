@@ -10,7 +10,7 @@ x-common-options: &common-options
     depends_on:
         - scripts
     environment:
-        MOUNT_WAIT_COMMAND: until [ -d .devcontainer ]; do :; done
+        MOUNT_WAIT_COMMAND: until [ -d /root/shared_bin ]; do :; done
         LAUNCH_COMMAND: >-
             sudo find /root/shared_bin/ -type f | xargs -I {} basename {} | xargs -I {} sh -c '
             if ! command -v {}; then sudo cp -f /root/shared_bin/{} /usr/local/bin/{} && sudo chmod +s /usr/local/bin/{}; fi
@@ -18,11 +18,11 @@ x-common-options: &common-options
             sleep infinity
     volumes:
         - /var/run/docker.sock:/var/run/docker.sock
-        - ${WORKSPACE_ROOT}/${COMPOSE_PROJECT_NAME}:/workspaces/${COMPOSE_PROJECT_NAME}
+        - ${WORKSPACE_ROOT}:/workspaces
         - shared_bin:/root/shared_bin
         - tmp:/tmp
         - vscode-server:/root/.vscode-server/bin
-    working_dir: /workspaces/${COMPOSE_PROJECT_NAME}
+    working_dir: /workspaces/${PROJECT_FOLDER}
     command: sh -c 'eval $${MOUNT_WAIT_COMMAND} && eval $${LAUNCH_COMMAND}'
 
 services:
@@ -65,6 +65,32 @@ services:
     review:
         build: ./review-docker
         <<: *common-options
+        command:
+            - sh
+            - -ecx
+            - |
+              sudo chown -R `id -u`:`id -g` /root
+              eval $${MOUNT_WAIT_COMMAND}
+              cp -fp .env .env.org
+              # prepare variables
+              container_volume_name=`/root/shared_bin/docker inspect --format='{{ index .Config.Labels "vsch.local.repository.volume"}}' $$HOSTNAME`
+              project_folder_name=`basename $$PWD`
+              # modify WORKSPACE_ROOT
+              if [ -n $$container_volume_name ]; then
+              sed -i -r 's/^(WORKSPACE_ROOT=).+$$/\1\/var\/lib\/docker\/volumes\/'"$$container_volume_name"'\/_data/' .env
+              fi
+              # modify PROJECT_FOLDER
+              sed -i -r 's/^(PROJECT_FOLDER=).+$$/\1'"$$project_folder_name"'/' .env
+              # modify COMPOSE_PROJECT_NAME
+              sed -i -r 's/^(COMPOSE_PROJECT_NAME=).+$$/\1'"$${container_volume_name}_$${project_folder_name}"'/' .env
+              # modify UID / GID
+              uid=`ls -nld . | awk '{print $$3}'`
+              uid=`ls -nld . | awk '{print $$4}'`
+              sed -i -r 's/^(UID=).+$$/\1'"$$uid"'/' .env
+              sed -i -r 's/^(GID=).+$$/\1'"$$uid"'/' .env
+              diff -u .env .env.org
+              rm .env.org
+              eval $${LAUNCH_COMMAND}
 
     tmux:
         build: ./tmux-docker
