@@ -1,7 +1,6 @@
 version: "3.4"
 
 volumes:
-    shared_bin:
     tmp:
     vscode-server:
 
@@ -10,16 +9,15 @@ x-common-options: &common-options
     depends_on:
         - scripts
     environment:
-        MOUNT_WAIT_COMMAND: until [ -d /root/shared_bin ]; do :; done
+        MOUNT_WAIT_COMMAND: until [ -d /root/.vscode-server ]; do :; done
         LAUNCH_COMMAND: >-
-            sudo find /root/shared_bin/ -type f | xargs -I {} basename {} | xargs -I {} sh -c '
-            if ! command -v {}; then sudo cp -f /root/shared_bin/{} /usr/local/bin/{} && sudo chmod +s /usr/local/bin/{}; fi
+            sudo find /tmp/shared_bin/ -type f | xargs -I {} basename {} | xargs -I {} sh -c '
+            if ! command -v {}; then sudo cp -f /tmp/shared_bin/{} /usr/local/bin/{} && sudo chmod +s /usr/local/bin/{}; fi
             ' &&
             sleep infinity
     volumes:
         - /var/run/docker.sock:/var/run/docker.sock
         - ${WORKSPACE_ROOT}:/workspaces
-        - shared_bin:/root/shared_bin
         - tmp:/tmp
         - vscode-server:/root/.vscode-server/bin
     working_dir: /workspaces/${PROJECT_FOLDER}
@@ -29,8 +27,8 @@ services:
     docker:
         build: ./docker-docker
         volumes:
-            - shared_bin:/root/shared_bin
-        command: sh -c 'cp -f `which docker` /root/shared_bin/docker && sleep infinity'
+            - tmp:/tmp
+        command: sh -c 'mkdir -p /tmp/shared_bin && cp -f `which docker` /tmp/shared_bin/docker && sleep infinity'
 
     scripts:
         image: bash
@@ -41,8 +39,8 @@ services:
         command: >-
             sh -c '
             eval $${MOUNT_WAIT_COMMAND} &&
-            cp -f /root/shared_bin/docker /usr/local/bin/ &&
-            bash .devcontainer/generate_docker_cmd.sh /root/shared_bin
+            cp -f /tmp/shared_bin/docker /usr/local/bin/ &&
+            bash .devcontainer/generate_docker_cmd.sh /tmp/shared_bin
             nvim@neovim
             tmux@tmux
             git@git
@@ -72,8 +70,8 @@ services:
               sudo chown -R `id -u`:`id -g` /root
               eval $${MOUNT_WAIT_COMMAND}
               # prepare variables
-              container_volume_name=`sudo /root/shared_bin/docker inspect --format='{{ index .Config.Labels "vsch.local.repository.volume"}}' $$HOSTNAME`
-              project_folder_name=`sudo /root/shared_bin/docker inspect --format='{{ index .Config.Labels "com.docker.compose.project.working_dir"}}' $$HOSTNAME | sed -r 's/^.+\/(.+)\/.+$$/\1/'`
+              container_volume_name=`sudo /tmp/shared_bin/docker inspect --format='{{ index .Config.Labels "vsch.local.repository.volume"}}' $$HOSTNAME`
+              project_folder_name=`sudo /tmp/shared_bin/docker inspect --format='{{ index .Config.Labels "com.docker.compose.project.working_dir"}}' $$HOSTNAME | sed -r 's/^.+\/(.+)\/.+$$/\1/'`
               cd ../$$project_folder_name
               # modify .env
               cp -fp .env .env.org
@@ -92,6 +90,7 @@ services:
               sed -i -r 's/^(GID=).+$$/\1'"$$uid"'/' .env
               diff -u .env .env.org
               rm .env.org
+              cd -
               eval $${LAUNCH_COMMAND}
 
     tmux:
