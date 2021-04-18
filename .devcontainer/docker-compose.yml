@@ -26,6 +26,7 @@ x-common-options: &common-options
 services:
     docker:
         build: ./docker-docker
+        image: splascope/docker-docker
         volumes:
             - tmp:/tmp
         command: sh -cex 'mkdir -p /tmp/shared_bin && cp -f `which docker` /tmp/shared_bin/docker && sleep infinity'
@@ -97,10 +98,12 @@ services:
 
     tmux:
         build: ./tmux-docker
+        image: splascope/tmux-docker
         <<: *common-options
 
     git:
         build: ./git-docker
+        image: splascope/git-docker
         <<: *common-options
 
     neovim:
@@ -108,4 +111,5 @@ services:
             context: ./neovim-docker
             args:
                 EXTRA_COC_PLUGINS: coc-docker
+        image: splascope/neovim-docker
         <<: *common-options
