@@ -72,19 +72,19 @@ services:
               sudo chown -R `id -u`:`id -g` /root
               eval $${MOUNT_WAIT_COMMAND}
               # prepare variables
-              container_volume_name=`/root/shared_bin/docker inspect --format='{{ index .Config.Labels "vsch.local.repository.volume"}}' $$HOSTNAME`
-              project_folder_name=`/root/shared_bin/docker inspect --format='{{ index .Config.Labels "vsch.local.repository.folder"}}' $$HOSTNAME`
+              container_volume_name=`sudo /root/shared_bin/docker inspect --format='{{ index .Config.Labels "vsch.local.repository.volume"}}' $$HOSTNAME`
+              project_folder_name=`sudo /root/shared_bin/docker inspect --format='{{ index .Config.Labels "com.docker.compose.project.working_dir"}}' $$HOSTNAME | sed -r 's/^.+\/(.+)\/.+$$/\1/'`
               cd ../$$project_folder_name
               # modify .env
               cp -fp .env .env.org
               # modify WORKSPACE_ROOT
-              if [ -n $$container_volume_name ]; then
+              if [ -n "$$container_volume_name" ]; then
               sed -i -r 's/^(WORKSPACE_ROOT=).+$$/\1\/var\/lib\/docker\/volumes\/'"$$container_volume_name"'\/_data/' .env
               fi
               # modify PROJECT_FOLDER
               sed -i -r 's/^(PROJECT_FOLDER=).+$$/\1'"$$project_folder_name"'/' .env
               # modify COMPOSE_PROJECT_NAME
-              sed -i -r 's/^(COMPOSE_PROJECT_NAME=).+$$/\1'"$${container_volume_name}_$${project_folder_name}"'/' .env
+              sed -i -r 's/^(COMPOSE_PROJECT_NAME=).+$$/\1'"$${container_volume_name:-"local"}_$${project_folder_name}"'/' .env
               # modify UID / GID
               uid=`ls -nld . | awk '{print $$3}'`
               uid=`ls -nld . | awk '{print $$4}'`
