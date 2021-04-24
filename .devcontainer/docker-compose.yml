@@ -14,6 +14,7 @@ x-common-options: &common-options
             sudo find /tmp/shared_bin/ -type f | xargs -I {} basename {} | xargs -I {} sh -cex '
             if ! command -v {}; then sudo cp -f /tmp/shared_bin/{} /usr/local/bin/{} && sudo chmod +s /usr/local/bin/{}; fi
             ' &&
+            if [ "undefined" = "$$(docker inspect --format '{{ index .Config.Labels "com.docker.compose.project"}}' $$(hostname))" ]; then docker rm -f $$(hostname); fi &&
             sleep infinity
     volumes:
         - /var/run/docker.sock:/var/run/docker.sock
@@ -91,8 +92,6 @@ services:
               uid=`ls -nld . | awk '{print $$4}'`
               sed -i -r 's/^(UID=).+$$/\1'"$$uid"'/' .env
               sed -i -r 's/^(GID=).+$$/\1'"$$uid"'/' .env
-              diff -u .env .env.org
-              rm .env.org
               cd -
               eval $${LAUNCH_COMMAND}
 
