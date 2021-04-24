@@ -12,7 +12,7 @@ x-common-options: &common-options
         MOUNT_WAIT_COMMAND: until [ -d /root/.vscode-server ]; do :; done
         LAUNCH_COMMAND: >-
             sudo find /tmp/shared_bin/ -type f | xargs -I {} basename {} | xargs -I {} sh -cex '
-            if ! command -v {}; then sudo cp -f /tmp/shared_bin/{} /usr/local/bin/{} && sudo chmod +s /usr/local/bin/{}; fi
+            if ! command -v {}; then sudo cp -f /tmp/shared_bin/{} /usr/local/bin/{}; fi
             ' &&
             if [ "undefined" = "$$(docker inspect --format '{{ index .Config.Labels "com.docker.compose.project"}}' $$(hostname))" ]; then docker rm -f $$(hostname); fi &&
             sleep infinity
