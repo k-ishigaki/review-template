@@ -78,7 +78,6 @@ services:
               project_folder_name=`sudo /tmp/shared_bin/docker inspect --format='{{ index .Config.Labels "com.docker.compose.project.working_dir"}}' $$HOSTNAME | sed -r 's/^.+\/(.+)\/.+$$/\1/'`
               cd ../$$project_folder_name
               # modify .env
-              cp -fp .env .env.org
               # modify WORKSPACE_ROOT
               if [ -n "$$container_volume_name" ]; then
               sed -i -r 's/^(WORKSPACE_ROOT=).+$$/\1\/var\/lib\/docker\/volumes\/'"$$container_volume_name"'\/_data/' .env
