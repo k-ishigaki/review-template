@@ -17,19 +17,16 @@ Re:VIEWによる日本語の技術書の執筆環境です．
 ## 特徴
 
 * Docker上で動作するため，ローカルの環境を汚さずに使用できる
-* VS Code（GUI）で使える
+* VS Codeの[Dev Container](https://code.visualstudio.com/docs/remote/containers)を使うので，GUIで直感的に編集できる
 * [textlint](https://github.com/textlint/textlint)による文書校正が利用できる
 
 ## 使い方
 
-1. VS Codeを起動し，`Remote-Containers: Clone Repository in Container Volume...`コマンドを実行  
-  パラメータは以下を指定してください．
-  * Repository url: https://github.com/k-ishigaki/review-template
-  * Volume name: `vsc-remote-containers`
-  * Target folder name: `review-template`
-2. src/src.reを開いて編集  
+1. VS Codeを起動し，`Clone Repository in Container Volume...`コマンドで本リポジトリを指定してDev Containerを起動してください．
+1. 一度目は起動エラーとなるので，`Retry`で起動し直してください．
+1. src/src.reを開いて編集  
   `review: Show preview`コマンドでプレビューを見ながら編集できます．
-3. `Ctrl + Shift + B`または`⌘ + Shift + B`でビルド  
+1. `Ctrl + Shift + B`または`⌘ + Shift + B`でビルド  
   srcディレクトリ配下にbook.pdfが生成されます．
 
 ## 構成
