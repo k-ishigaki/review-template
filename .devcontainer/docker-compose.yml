@@ -5,7 +5,7 @@ volumes:
     vscode-server:
 
 x-common-options: &common-options
-    user: ${UID}:${GID}
+    user: ${UID:-0}:${GID:-0}
     depends_on:
         - docker
     environment:
@@ -43,14 +43,14 @@ x-common-options: &common-options
                 sudo chmod +x /usr/local/bin/$$command_name
             done
         LAUNCH_COMMAND: |
-            if [ "undefined" = "${COMPOSE_PROJECT_NAME}" ]; then
+            if [ -z "${COMPOSE_PROJECT_NAME}" ]; then
                 # exit if the project name is undetermined
                 docker rm -f $$HOSTNAME
             fi
             sleep infinity
     volumes:
         - /var/run/docker.sock:/var/run/docker.sock
-        - ${WORKSPACE_ROOT}:/workspaces
+        - ${WORKSPACE_ROOT:-../../}:/workspaces
         - tmp:/tmp
         - vscode-server:/root/.vscode-server/bin
     working_dir: /workspaces/${PROJECT_FOLDER}
@@ -100,18 +100,22 @@ services:
                 sudo chown -R `id -u`:`id -g` /root
                 eval "$${PREPARE_COMMAND}"
 
-                container_volume_name=`sudo /tmp/shared_bin/docker inspect --format='{{ index .Config.Labels "vsch.local.repository.volume"}}' $$HOSTNAME`
-                project_folder_name=`sudo /tmp/shared_bin/docker inspect --format='{{ index .Config.Labels "com.docker.compose.project.working_dir"}}' $$HOSTNAME | sed -r 's/^.+\/(.+)\/.+$$/\1/'`
-                cd ../$$project_folder_name
+                container_volume_name=`docker inspect --format='{{ index .Config.Labels "vsch.local.repository.volume"}}' $$HOSTNAME`
+                project_folder_name=`docker inspect --format='{{ index .Config.Labels "com.docker.compose.project.working_dir"}}' $$HOSTNAME | sed -r 's/^.+\/(.+)\/.+$$/\1/'`
+                cd /workspaces/$$project_folder_name
 
-                # modify .env
-                if [ -n "$$container_volume_name" ]; then
-                    sed -i -r 's/^(WORKSPACE_ROOT=).*$$/\1\/var\/lib\/docker\/volumes\/'"$$container_volume_name"'\/_data/' .env
-                fi
-                sed -i -r 's/^(PROJECT_FOLDER=).+$$/\1'"$$project_folder_name"'/' .env
-                sed -i -r 's/^(COMPOSE_PROJECT_NAME=).*$$/\1'"$${container_volume_name:-"local"}_$${project_folder_name}"'/' .env
-                sed -i -r 's/^(UID=).*$$/\1'$$(ls -nld . | awk '{print $$3}')'/' .env
-                sed -i -r 's/^(GID=).*$$/\1'$$(ls -nld . | awk '{print $$4}')'/' .env
+                # make .env
+                { \
+                    echo "# AUTO GENERATED FILE"; \
+                    echo "# DO NOT MODIFY THIS FILE"; \
+                    echo "UID=$$(ls -nld . | awk '{print $$3}')"; \
+                    echo "GID=$$(ls -nld . | awk '{print $$4}')"; \
+                    if [ -n "$$container_volume_name" ]; then \
+                        echo "WORKSPACE_ROOT=/var/lib/docker/volumes/$$container_volume_name/_data"; \
+                    fi; \
+                    echo "PROJECT_FOLDER=$$project_folder_name"; \
+                    echo "COMPOSE_PROJECT_NAME=$${container_volume_name:-local}_$${project_folder_name}"; \
+                } > .env
 
                 eval "$${LAUNCH_COMMAND}"
 
