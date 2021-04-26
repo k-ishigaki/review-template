@@ -15,7 +15,7 @@ x-common-options: &common-options
             sleep 1
 
             # prepare docker command
-            cp -f /tmp/shared_bin/docker /usr/local/bin/
+            ln -sf /tmp/shared_bin/docker /usr/local/bin/
 
             # prepare other commands
             container_commands='
@@ -67,6 +67,7 @@ services:
         image: splascope/docker-docker
         volumes:
             - tmp:/tmp
+            - /var/run/docker.sock:/var/run/docker.sock
         command:
             - sh
             - -cex
