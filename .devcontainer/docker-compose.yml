@@ -121,7 +121,8 @@ services:
                 # .env is read from .devcontainer in `Reopen in Container` case
                 cp .env .devcontainer/
 
-                eval "$${LAUNCH_COMMAND}"
+                docker rename $$HOSTNAME $${container_volume_name:-local}_$${project_folder_name}_review_1 || true
+                sleep infinity
 
     tmux:
         build: ./tmux-docker

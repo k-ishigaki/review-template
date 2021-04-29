@@ -12,6 +12,37 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "label": "Check If Rebuild Container Required",
+            "type": "shell",
+            "command": "! fish -c true",
+            "problemMatcher": [],
+            "options": {
+                "shell": {
+                    "executable": "sh",
+                    "args": ["-c"]
+                }
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "never",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "Rebuild Container If Required",
+            "command": "${command:remote-containers.rebuildContainer}",
+            "problemMatcher": [],
+            "runOptions": {
+                "runOn": "folderOpen"
+            },
+            "dependsOn": [
+                "Check If Rebuild Container Required"
+            ]
         }
     ]
 }

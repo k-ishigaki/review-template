@@ -23,7 +23,6 @@ Re:VIEWによる日本語の技術書の執筆環境です．
 ## 使い方
 
 1. VS Codeを起動し，`Clone Repository in Container Volume...`コマンドで本リポジトリを指定してDev Containerを起動してください．
-1. 一度目は起動エラーとなるので，`Retry`で起動し直してください．
 1. src/src.reを開いて編集  
   `review: Show preview`コマンドでプレビューを見ながら編集できます．
 1. `Ctrl + Shift + B`または`⌘ + Shift + B`でビルド  
