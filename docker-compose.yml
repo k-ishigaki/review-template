@@ -45,6 +45,7 @@ x-common-options: &common-options
         LAUNCH_COMMAND: |
             if [ -z "${COMPOSE_PROJECT_NAME}" ]; then
                 # exit if the project name is undetermined
+                sleep 10
                 docker rm -f $$HOSTNAME
             fi
             sleep infinity
@@ -118,9 +119,7 @@ services:
                 } > .env
                 sudo chown `id -u`:`id -g` .env
 
-                self_service_name=`docker inspect --format='{{ index .Config.Labels "com.docker.compose.service"}}' $$HOSTNAME`
-                docker rename $$HOSTNAME $${container_volume_name:-local}_$${project_folder_name}_$${self_service_name}_1 || true
-                sleep infinity
+                eval "$${LAUNCH_COMMAND}"
 
     tmux:
         build: ./.devcontainer/tmux-docker
