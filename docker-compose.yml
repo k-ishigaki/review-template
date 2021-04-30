@@ -5,7 +5,7 @@ volumes:
     vscode-server:
 
 x-common-options: &common-options
-    user: ${UID:-0}:${GID:-0}
+    user: ${USER_ID:-0}:${GROUP_ID:-0}
     depends_on:
         - docker
     environment:
@@ -51,7 +51,7 @@ x-common-options: &common-options
             sleep infinity
     volumes:
         - /var/run/docker.sock:/var/run/docker.sock
-        - ${WORKSPACE_ROOT:-../../}:/workspaces
+        - ${WORKSPACE_ROOT:-../}:/workspaces
         - tmp:/tmp
         - vscode-server:/root/.vscode-server/bin
     working_dir: /workspaces/${PROJECT_FOLDER}
@@ -64,7 +64,7 @@ x-common-options: &common-options
 
 services:
     docker:
-        build: ./docker-docker
+        build: ./.devcontainer/docker-docker
         image: splascope/docker-docker
         volumes:
             - tmp:/tmp
@@ -78,7 +78,7 @@ services:
                 docker rm -f $$HOSTNAME
 
     node:
-        build: ./node-docker
+        build: ./.devcontainer/node-docker
         image: splascope/node-docker
         <<: *common-options
         # Install textlint packages.
@@ -92,7 +92,7 @@ services:
                 eval "$${LAUNCH_COMMAND}"
 
     review:
-        build: ./review-docker
+        build: ./.devcontainer/review-docker
         image: splascope/review-docker
         <<: *common-options
         command:
@@ -102,39 +102,38 @@ services:
                 eval "$${PREPARE_COMMAND}"
 
                 container_volume_name=`docker inspect --format='{{ index .Config.Labels "vsch.local.repository.volume"}}' $$HOSTNAME`
-                project_folder_name=`docker inspect --format='{{ index .Config.Labels "com.docker.compose.project.working_dir"}}' $$HOSTNAME | sed -r 's/^.+\/(.+)\/.+$$/\1/'`
+                project_folder_name=`docker inspect --format='{{ index .Config.Labels "com.docker.compose.project.working_dir"}}' $$HOSTNAME | sed -r 's/^.+\/(.+)$$/\1/'`
                 cd /workspaces/$$project_folder_name
 
                 # make .env
                 { \
                     echo "# AUTO GENERATED FILE"; \
                     echo "# DO NOT MODIFY THIS FILE"; \
-                    echo "UID=$$(ls -nld . | awk '{print $$3}')"; \
-                    echo "GID=$$(ls -nld . | awk '{print $$4}')"; \
+                    echo "USER_ID=$$(ls -nld . | awk '{print $$3}')"; \
+                    echo "GROUP_ID=$$(ls -nld . | awk '{print $$4}')"; \
                     if [ -n "$$container_volume_name" ]; then \
                         echo "WORKSPACE_ROOT=/var/lib/docker/volumes/$$container_volume_name/_data"; \
                     fi; \
                     echo "PROJECT_FOLDER=$$project_folder_name"; \
                     echo "COMPOSE_PROJECT_NAME=$${container_volume_name:-local}_$${project_folder_name}"; \
                 } > .env
-                sudo chmod 777 .env
-                # .env is read from .devcontainer in `Reopen in Container` case
-                cp .env .devcontainer/
+                sudo chown `id -u`:`id -g` .env
 
-                docker rename $$HOSTNAME $${container_volume_name:-local}_$${project_folder_name}_review_1 || true
+                self_service_name=`docker inspect --format='{{ index .Config.Labels "com.docker.compose.service"}}' $$HOSTNAME`
+                docker rename $$HOSTNAME $${container_volume_name:-local}_$${project_folder_name}_$${self_service_name}_1 || true
                 sleep infinity
 
     tmux:
-        build: ./tmux-docker
+        build: ./.devcontainer/tmux-docker
         image: splascope/tmux-docker
         <<: *common-options
 
     git:
-        build: ./git-docker
+        build: ./.devcontainer/git-docker
         image: splascope/git-docker
         <<: *common-options
 
     neovim:
-        build: ./neovim-docker
+        build: ./.devcontainer/neovim-docker
         image: splascope/neovim-docker
         <<: *common-options
