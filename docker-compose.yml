@@ -60,8 +60,7 @@ x-common-options: &common-options
 
 services:
     docker:
-        image: splascope/docker
-        build: ./.devcontainer/docker-docker
+        image: splascope/docker:1.1.0
         <<: *common-options
         command:
             - sh
