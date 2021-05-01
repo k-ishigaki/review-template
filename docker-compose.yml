@@ -6,19 +6,15 @@ volumes:
 
 x-common-options: &common-options
     user: ${USER_ID:-0}:${GROUP_ID:-0}
-    depends_on:
-        - docker
     environment:
         PREPARE_COMMAND: |
-            # wait for mounting the volumes
-            until [ -d /root/.vscode-server ]; do :; done
-            sleep 1
-
             # prepare docker command
+            until /tmp/shared_bin/docker version > /dev/null; do sleep 1; done
             sudo ln -sf /tmp/shared_bin/docker /usr/local/bin/
 
             # prepare other commands
             container_commands='
+                docker-compose@docker
                 nvim@neovim
                 tmux@tmux
                 git@git
@@ -64,17 +60,16 @@ x-common-options: &common-options
 
 services:
     docker:
-        image: splascope/docker:1.0.0
-        volumes:
-            - tmp:/tmp
-            - /var/run/docker.sock:/var/run/docker.sock
+        image: splascope/docker
+        build: ./.devcontainer/docker-docker
+        <<: *common-options
         command:
             - sh
             - -cex
             - |
                 mkdir -p /tmp/shared_bin
                 cp -f `which docker` /tmp/shared_bin/docker
-                docker rm -f $$HOSTNAME
+                eval "$${LAUNCH_COMMAND}"
 
     node:
         image: splascope/node:1.0.0
