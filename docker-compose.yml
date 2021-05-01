@@ -9,8 +9,13 @@ x-common-options: &common-options
     environment:
         PREPARE_COMMAND: |
             # prepare docker command
-            until /tmp/shared_bin/docker version > /dev/null; do sleep 1; done
-            sudo ln -sf /tmp/shared_bin/docker /usr/local/bin/
+            if ! command -v docker 2&> /dev/null; then
+                until /tmp/shared_bin/docker version > /dev/null; do sleep 1; done
+                sudo ln -sf /tmp/shared_bin/docker /usr/local/bin/
+            elif ! readlink `which docker`; then
+                mkdir -p /tmp/shared_bin
+                cp -f `which docker` /tmp/shared_bin/docker
+            fi
 
             # prepare other commands
             container_commands='
@@ -62,13 +67,6 @@ services:
     docker:
         image: splascope/docker:1.1.0
         <<: *common-options
-        command:
-            - sh
-            - -cex
-            - |
-                mkdir -p /tmp/shared_bin
-                cp -f `which docker` /tmp/shared_bin/docker
-                eval "$${LAUNCH_COMMAND}"
 
     node:
         image: splascope/node:1.0.0
