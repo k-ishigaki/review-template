@@ -64,8 +64,7 @@ x-common-options: &common-options
 
 services:
     docker:
-        build: ./.devcontainer/docker-docker
-        image: splascope/docker-docker
+        image: splascope/docker:1.0.0
         volumes:
             - tmp:/tmp
             - /var/run/docker.sock:/var/run/docker.sock
@@ -78,8 +77,7 @@ services:
                 docker rm -f $$HOSTNAME
 
     node:
-        build: ./.devcontainer/node-docker
-        image: splascope/node-docker
+        image: splascope/node:1.0.0
         <<: *common-options
         # Install textlint packages.
         # Packages are configured in ./package.json.
@@ -92,8 +90,7 @@ services:
                 eval "$${LAUNCH_COMMAND}"
 
     review:
-        build: ./.devcontainer/review-docker
-        image: splascope/review-docker
+        image: splascope/review:1.0.0
         <<: *common-options
         command:
             - sh
@@ -122,16 +119,13 @@ services:
                 eval "$${LAUNCH_COMMAND}"
 
     tmux:
-        build: ./.devcontainer/tmux-docker
-        image: splascope/tmux-docker
+        image: splascope/tmux:1.0.0
         <<: *common-options
 
     git:
-        build: ./.devcontainer/git-docker
-        image: splascope/git-docker
+        image: splascope/git:1.0.0
         <<: *common-options
 
     neovim:
-        build: ./.devcontainer/neovim-docker
-        image: splascope/neovim-docker
+        image: splascope/neovim:1.0.0
         <<: *common-options
