@@ -17,6 +17,30 @@ x-common-options: &common-options
                 cp -f `which docker` /tmp/shared_bin/docker
             fi
 
+            # make .env
+            project_folder_name=`docker inspect --format='{{ index .Config.Labels "vsch.local.repository.folder"}}' $$HOSTNAME`
+            container_volume_name=`docker inspect --format='{{ index .Config.Labels "vsch.local.repository.volume"}}' $$HOSTNAME`
+            if [ ! -z "$$project_folder_name" ]; then
+                cd /workspaces/$$project_folder_name
+                { \
+                    echo "# AUTO GENERATED FILE"; \
+                    echo "# DO NOT MODIFY THIS FILE"; \
+                    echo "USER_ID=$$(ls -nld . | awk '{print $$3}')"; \
+                    echo "GROUP_ID=$$(ls -nld . | awk '{print $$4}')"; \
+                    if [ -n "$$container_volume_name" ]; then \
+                        echo "WORKSPACE_ROOT=/var/lib/docker/volumes/$$container_volume_name/_data"; \
+                    fi; \
+                    echo "PROJECT_FOLDER=$$project_folder_name"; \
+                    echo "COMPOSE_PROJECT_NAME=$${container_volume_name:-local}_$${project_folder_name}"; \
+                } > .env
+                sudo chown `id -u`:`id -g` .env
+            fi
+
+            # exit if the project name is undetermined
+            if [ -z "${COMPOSE_PROJECT_NAME}" ]; then
+                docker rm -f $$HOSTNAME
+            fi
+
             # prepare other commands
             container_commands='
                 docker-compose@docker
@@ -43,24 +67,13 @@ x-common-options: &common-options
                 } | sudo tee /usr/local/bin/$$command_name
                 sudo chmod +x /usr/local/bin/$$command_name
             done
-        LAUNCH_COMMAND: |
-            if [ -z "${COMPOSE_PROJECT_NAME}" ]; then
-                # exit if the project name is undetermined
-                docker rm -f $$HOSTNAME
-            fi
-            sleep infinity
     volumes:
         - /var/run/docker.sock:/var/run/docker.sock
         - ${WORKSPACE_ROOT:-../}:/workspaces
         - tmp:/tmp
         - vscode-server:/root/.vscode-server/bin
     working_dir: /workspaces/${PROJECT_FOLDER}
-    command:
-        - sh
-        - -cex
-        - |
-            eval "$${PREPARE_COMMAND}"
-            eval "$${LAUNCH_COMMAND}"
+    command: sh -cex 'eval "$${PREPARE_COMMAND}" && sleep infinity'
 
 services:
     docker:
@@ -72,42 +85,11 @@ services:
         <<: *common-options
         # Install textlint packages.
         # Packages are configured in ./package.json.
-        command:
-            - sh
-            - -cex
-            - |
-                eval "$${PREPARE_COMMAND}"
-                npm install
-                eval "$${LAUNCH_COMMAND}"
+        command: sh -cex 'eval "$${PREPARE_COMMAND}" && npm install && sleep infinity'
 
     review:
         image: splascope/review:1.0.0
         <<: *common-options
-        command:
-            - sh
-            - -ecx
-            - |
-                eval "$${PREPARE_COMMAND}"
-
-                container_volume_name=`docker inspect --format='{{ index .Config.Labels "vsch.local.repository.volume"}}' $$HOSTNAME`
-                project_folder_name=`docker inspect --format='{{ index .Config.Labels "com.docker.compose.project.working_dir"}}' $$HOSTNAME | sed -r 's/^.+\/(.+)$$/\1/'`
-                cd /workspaces/$$project_folder_name
-
-                # make .env
-                { \
-                    echo "# AUTO GENERATED FILE"; \
-                    echo "# DO NOT MODIFY THIS FILE"; \
-                    echo "USER_ID=$$(ls -nld . | awk '{print $$3}')"; \
-                    echo "GROUP_ID=$$(ls -nld . | awk '{print $$4}')"; \
-                    if [ -n "$$container_volume_name" ]; then \
-                        echo "WORKSPACE_ROOT=/var/lib/docker/volumes/$$container_volume_name/_data"; \
-                    fi; \
-                    echo "PROJECT_FOLDER=$$project_folder_name"; \
-                    echo "COMPOSE_PROJECT_NAME=$${container_volume_name:-local}_$${project_folder_name}"; \
-                } > .env
-                sudo chown `id -u`:`id -g` .env
-
-                eval "$${LAUNCH_COMMAND}"
 
     tmux:
         image: splascope/tmux:1.0.0
