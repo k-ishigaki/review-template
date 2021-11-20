@@ -11,6 +11,9 @@ rules:
     preset-ja-technical-writing:
         ja-no-mixed-period:
             periodMark: "．"
+        max-ten:
+            touten: "，"
+            kuten: "．"
     prh:
         rulePaths:
             - "./prh.yml"
