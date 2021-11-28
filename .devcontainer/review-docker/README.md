@@ -4,18 +4,12 @@
 
 ## Install
 
-1. Build image
+1. Prepare script file
 ```sh
-$ git clone https://github.com/k-ishigaki/review-docker.git
-$ cd review-docker
-$ docker build .
-```
-2. Prepare script file
-```sh
-$ echo 'docker exec -i --workdir $(pwd) review_container rake $@' > ~/.local/bin/rake
+$ echo 'docker exec -i --workdir $(pwd) ghcr.io/k-ishigaki/review-docker rake $@' > ~/.local/bin/rake
 $ sudo chmod +x ~/.local/bin/rake
 ```
-3. Prepare $PATH<br>
+2. Prepare $PATH<br>
 Example of Ubuntu
 ```sh
 $ echo 'export PATH=$PATH:$HOME/.local/bin' >> ~/.profile
@@ -31,7 +25,7 @@ $ docker run -it -d \
         --mount type=bind,source=<host_dir>,target=<container_mount_dir> \
         <image_id>
 ```
-2. Execute rake!
+2. Execute Rake!
 ```sh
 $ rake
 ```
