@@ -77,28 +77,28 @@ x-common-options: &common-options
 
 services:
     docker:
-        image: splascope/docker:1.1.0
+        image: ghcr.io/k-ishigaki/docker-docker:1
         <<: *common-options
 
     node:
-        image: splascope/node:1.0.0
+        image: ghcr.io/k-ishigaki/node-docker:1
         <<: *common-options
         # Install textlint packages.
         # Packages are configured in ./package.json.
         command: sh -cex 'eval "$${PREPARE_COMMAND}" && npm install && sleep infinity'
 
     review:
-        image: splascope/review:1.0.0
+        image: ghcr.io/k-ishigaki/review-docker:1
         <<: *common-options
 
     tmux:
-        image: splascope/tmux:1.0.0
+        image: ghcr.io/k-ishigaki/tmux-docker:1
         <<: *common-options
 
     git:
-        image: splascope/git:1.0.0
+        image: ghcr.io/k-ishigaki/git-docker:1
         <<: *common-options
 
     neovim:
-        image: splascope/neovim:1.0.0
+        image: ghcr.io/k-ishigaki/neovim-docker:1
         <<: *common-options
