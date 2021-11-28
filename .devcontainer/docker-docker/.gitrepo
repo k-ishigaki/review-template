@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://github.com/k-ishigaki/docker-docker
 	branch = master
-	commit = 2e8b237f75400544a883ef9ac7f843484d84798e
-	parent = 2c0c52600ec270bc8b960d9676f13532ab4435a2
+	commit = b093b59739917f68f8118232868975ef65d0fdde
+	parent = a7834bc7f47d6c8244d6d6984d2220bcd3273c7f
 	method = merge
 	cmdver = 0.4.3
