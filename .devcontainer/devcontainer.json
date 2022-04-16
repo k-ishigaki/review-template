@@ -20,7 +20,13 @@
 
     // Set *default* container specific settings.json values on container create.
     "settings": {
-        "terminal.integrated.shell.linux": "fish",
+        "terminal.integrated.profiles.linux": {
+            "fish": {
+                "path": "fish",
+                "args": []
+            }
+        },
+        "terminal.integrated.defaultProfile.linux": "fish",
         "textlint.languages": [
             "markdown",
             "plaintext",
