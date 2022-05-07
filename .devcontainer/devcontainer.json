@@ -43,5 +43,6 @@
         "atsushieno.language-review",
         "taichi.vscode-textlint",
         "James-Yu.latex-workshop",
+        "exiasr.hadolint"
     ],
 }
