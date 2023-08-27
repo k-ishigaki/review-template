@@ -8,11 +8,13 @@ Re:VIEWによる日本語の技術書の執筆環境です．
 * Git
 * Docker（WindowsまたはMacのDocker DesktopでもOK）
     * daemon  
-        `docker context`コマンドでリモートのDocker Daemonを使うこともできます．
+        `docker context`で設定すればリモートのDocker daemonを使うこともできます．
     * client
-    * Compose (__Version 1.21以上__)
+    * Compose  
+    __Composeはclient同梱のCompose V2を使ってください__（別途docker-composeをインストールしている場合はアンインストールしてください．）
 * Visual Studio Code  
-    * Remote Container plugin
+    * Dev Containers plugin (`ms-vscode-remote.remote-containers`)
+    * （リモートのDocker daemonを使用する場合）Remote - SSH (`ms-vscode-remote.remote-ssh`)
 
 ## 特徴
 
@@ -22,11 +24,14 @@ Re:VIEWによる日本語の技術書の執筆環境です．
 
 ## 使い方
 
-1. VS Codeを起動し，`Clone Repository in Container Volume...`コマンドで本リポジトリを指定してDev Containerを起動してください．
+1. （リモートのDocker daemonを使用する場合）`Remote - SSH: Conntect to Host...`でリモートPCに入る
+1. `Git: Clone`などで任意のフォルダにダウンロード
+1. `File: Open Folder`でダウンロードした`review-template`フォルダを開く
+1. `Dev Containers: Reopen in Container`でDev Containerを起動
 1. src/src.reを開いて編集  
   `review: Show preview`コマンドでプレビューを見ながら編集できます．
 1. `Ctrl + Shift + B`または`⌘ + Shift + B`でビルド  
-  srcディレクトリ配下にbook.pdfが生成されます．
+  `src`ディレクトリ配下に`book.pdf`が生成されます．VSCodeで開くとプレビューできます．
 
 ## 構成
 
