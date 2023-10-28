@@ -18,31 +18,32 @@
     // connected.
     "workspaceFolder": "/workspaces/review-template",
 
-    // Set *default* container specific settings.json values on container create.
-    "settings": {
-        "terminal.integrated.profiles.linux": {
-            "fish": {
-                "path": "fish",
-                "args": []
-            }
-        },
-        "terminal.integrated.defaultProfile.linux": "fish",
-        "textlint.languages": [
-            "markdown",
-            "plaintext",
-            "html",
-            "tex",
-            "latex",
-            "doctex",
-            "review",
-        ]
-    },
-
-    // Add the IDs of extensions you want installed when the container is created.
-    "extensions": [
-        "atsushieno.language-review",
-        "taichi.vscode-textlint",
-        "James-Yu.latex-workshop",
-        "exiasr.hadolint"
-    ],
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.profiles.linux": {
+                    "fish": {
+                        "path": "fish",
+                        "args": []
+                    }
+                },
+                "terminal.integrated.defaultProfile.linux": "fish",
+                "textlint.languages": [
+                    "markdown",
+                    "plaintext",
+                    "html",
+                    "tex",
+                    "latex",
+                    "doctex",
+                    "review",
+                ]
+            },
+            "extensions": [
+                "atsushieno.language-review",
+                "taichi.vscode-textlint",
+                "James-Yu.latex-workshop",
+                "exiasr.hadolint"
+            ]
+        }
+    }
 }
