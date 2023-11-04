@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://github.com/k-ishigaki/node-docker
 	branch = main
-	commit = 7d2721778d7300b0193de9cde1627d85ed2207a1
-	parent = ebf7e56157d82ce55fba605312d655594b963b85
+	commit = aadde25a244d7d6e26f386722677b70ae2b5028b
+	parent = 604ef91ac3473cec30f14cf5d8281cb2c166a5fb
 	method = merge
-	cmdver = 0.4.3
+	cmdver = 0.4.6
