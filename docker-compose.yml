@@ -62,7 +62,7 @@ services:
                 - BASE_IMAGE=ghcr.io/k-ishigaki/docker-docker:2.0
         <<: *common-options
         command: >
-            sh -cex 'eval "${PREPARE_COMMAND}" &&
+            sh -cex 'eval "$${PREPARE_COMMAND}" &&
             mkdir -p /tmp/shared_bin &&
             cp -f /usr/bin/docker /tmp/shared_bin/docker &&
             sleep infinity'
