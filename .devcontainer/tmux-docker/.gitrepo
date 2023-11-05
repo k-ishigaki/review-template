@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://github.com/k-ishigaki/tmux-docker
 	branch = master
-	commit = cb95d88906d563adb600a4bcea549bc96a5fa873
-	parent = 50e3f50f01681488e818efcee62c8e6c9132fc56
+	commit = b5287a03a2902c65b70d264d1c5d02ba858ee02b
+	parent = 162ee33024931bcd45330f2729f0b525d78b698c
 	method = merge
-	cmdver = 0.4.3
+	cmdver = 0.4.6
