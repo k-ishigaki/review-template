@@ -16,7 +16,9 @@
 
     // The optional 'workspaceFolder' property is the path VS Code should open by default when
     // connected.
-    "workspaceFolder": "/workspaces/review-template",
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+
+    "initializeCommand": "${localWorkspaceFolder}/.devcontainer/init.sh",
 
     "customizations": {
         "vscode": {
@@ -35,11 +37,13 @@
                     "tex",
                     "latex",
                     "doctex",
-                    "review",
+                    "review"
                 ]
             },
             "extensions": [
                 "atsushieno.language-review",
+                "eamodio.gitlens",
+                "ms-azuretools.vscode-docker",
                 "taichi.vscode-textlint",
                 "James-Yu.latex-workshop",
                 "exiasr.hadolint"
