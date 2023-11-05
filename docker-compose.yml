@@ -50,16 +50,20 @@ x-common-options: &common-options
         - /var/run/docker.sock:/var/run/docker.sock
         - ./:/workspaces/${COMPOSE_PROJECT_NAME}
         - tmp:/tmp
-        - vscode-server:/root/.vscode-server/bin
     working_dir: /workspaces/${COMPOSE_PROJECT_NAME}
     command: sh -cex 'eval "$${PREPARE_COMMAND}" && sleep infinity'
+
+x-common-args: &common-args
+    USER_ID: "${USER_ID}"
+    GROUP_ID: "${GROUP_ID}"
 
 services:
     docker:
         build:
             context: .
             args:
-                - BASE_IMAGE=ghcr.io/k-ishigaki/docker-docker:2.0
+                BASE_IMAGE: "ghcr.io/k-ishigaki/docker-docker:2.0"
+                <<: *common-args
         <<: *common-options
         command: >
             sh -cex 'eval "$${PREPARE_COMMAND}" &&
@@ -71,7 +75,8 @@ services:
         build:
             context: .
             args:
-                - BASE_IMAGE=ghcr.io/k-ishigaki/node-docker:2.0
+                BASE_IMAGE: "ghcr.io/k-ishigaki/node-docker:2.0"
+                <<: *common-args
         <<: *common-options
         # Install textlint packages.
         # Packages are configured in ./package.json.
@@ -81,33 +86,38 @@ services:
         build:
             context: .
             args:
-                - BASE_IMAGE=ghcr.io/k-ishigaki/review-docker:2.0
+                BASE_IMAGE: "ghcr.io/k-ishigaki/review-docker:2.0"
+                <<: *common-args
         <<: *common-options
 
     tmux:
         build:
             context: .
             args:
-                - BASE_IMAGE=ghcr.io/k-ishigaki/tmux-docker:2.0
+                BASE_IMAGE: "ghcr.io/k-ishigaki/tmux-docker:2.0"
+                <<: *common-args
         <<: *common-options
 
     git:
         build:
             context: .
             args:
-                - BASE_IMAGE=ghcr.io/k-ishigaki/git-docker:2.0
+                BASE_IMAGE: "ghcr.io/k-ishigaki/git-docker:2.0"
+                <<: *common-args
         <<: *common-options
 
     neovim:
         build:
             context: .
             args:
-                - BASE_IMAGE=ghcr.io/k-ishigaki/neovim-docker:2.0
+                BASE_IMAGE: "ghcr.io/k-ishigaki/neovim-docker:2.0"
+                <<: *common-args
         <<: *common-options
 
     hadolint:
         build:
             context: .
             args:
-                - BASE_IMAGE=ghcr.io/hadolint/hadolint:2.12.0-alpine
+                BASE_IMAGE: "ghcr.io/hadolint/hadolint:2.12.0-alpine"
+                <<: *common-args
         <<: *common-options

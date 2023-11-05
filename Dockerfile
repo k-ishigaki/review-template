@@ -2,6 +2,9 @@ ARG BASE_IMAGE
 # hadolint ignore=DL3006
 FROM ${BASE_IMAGE}
 
+ARG USER_ID
+ARG GROUP_ID
+
 RUN if command -v apk > /dev/null 2>&1; then \
         apk add --no-cache shadow=~4 sudo=~1; \
     else \
@@ -11,16 +14,8 @@ RUN if command -v apk > /dev/null 2>&1; then \
     fi
 
 RUN echo 'developer ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/developer && \
-    chmod u+s "$(which groupadd)" "$(which useradd)" && \
-    { \
-    echo "#!/bin/sh -e"; \
-    echo "user_id=\$(id -u)"; \
-    echo "group_id=\$(id -g)"; \
-    echo "getent group \$group_id || groupadd --gid \$group_id developer"; \
-    echo "getent passwd \$user_id || useradd --uid \$user_id --gid \$group_id --home-dir /root developer"; \
-    echo "sudo chown -R \$user_id:\$group_id /root"; \
-    echo "exec \"\$@\""; \
-    } > /entrypoint && chmod +x /entrypoint
-ENTRYPOINT [ "/entrypoint" ]
+    groupadd --gid ${GROUP_ID} developer && \
+    useradd --uid ${USER_ID} --gid ${GROUP_ID} -m developer && \
+    chown -R ${USER_ID}:${GROUP_ID} /root
 
 ENV HOME=/root
