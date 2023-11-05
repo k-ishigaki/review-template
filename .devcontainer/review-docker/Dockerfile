@@ -1,20 +1,6 @@
 FROM vvakame/review:5.1
 
-RUN apt-get update && apt-get install -y \
-    sudo \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
-
 RUN sed -i 's@archive.ubuntu.com@ftp.jaist.ac.jp/pub/Linux@g' /etc/apt/sources.list \
-    && apt-get update && apt-get install -y \
-    texlive-generic-recommended
-
-RUN echo "developer ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/developer && \
-    chmod u+s `which groupadd` `which useradd` && \
-    { \
-    echo '#!/bin/sh -e'; \
-    echo 'getent group `id -g` || groupadd --gid `id -g` developer'; \
-    echo 'getent passwd `id -u` || useradd --uid `id -u` --gid `id -g` --home-dir /root developer'; \
-    echo 'sudo find /root -maxdepth 1 | xargs sudo chown `id -u`:`id -g`'; \
-    echo 'exec "$@"'; \
-    } > /entrypoint && chmod +x /entrypoint
-ENTRYPOINT [ "/entrypoint" ]
+    && apt-get update && apt-get install -y --no-install-recommends \
+    texlive-generic-recommended='2018.20190227-2' \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*; \
