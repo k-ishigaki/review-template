@@ -28,14 +28,14 @@ Re:VIEWによる日本語の技術書の執筆環境です．
 1. `Git: Clone`などで任意のフォルダにダウンロード
 1. `File: Open Folder`でダウンロードした`review-template`フォルダを開く
 1. `Dev Containers: Reopen in Container`でDev Containerを起動
-1. src/src.reを開いて編集  
+1. `articles/src.re`を開いて編集  
   `review: Show preview`コマンドでプレビューを見ながら編集できます．
 1. `Ctrl + Shift + B`または`⌘ + Shift + B`でビルド  
-  `src`ディレクトリ配下に`book.pdf`が生成されます．VSCodeで開くとプレビューできます．
+  `articles`ディレクトリ配下に`book.pdf`が生成されます．VSCodeで開くとプレビューできます．
 
 ## 構成
 
-* src：Re:VIEWのソースコード
+* articles：Re:VIEWのソースコード
 * .textlintrc.yml：textlintのルール定義
 * allow.yml：textlintで無視したいパターン定義
 * prh.yml：prhのルール定義

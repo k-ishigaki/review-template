@@ -6,7 +6,7 @@
         {
             "label": "Build",
             "type": "shell",
-            "command": "cd src && rake pdf",
+            "command": "cd articles && rake pdf",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
