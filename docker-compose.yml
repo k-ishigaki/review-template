@@ -86,7 +86,7 @@ services:
         build:
             context: .
             args:
-                BASE_IMAGE: "ghcr.io/k-ishigaki/review-docker:2.0"
+                BASE_IMAGE: "ghcr.io/vvakame/review:5.8"
                 <<: *common-args
         <<: *common-options
 

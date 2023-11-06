@@ -3,15 +3,14 @@
 Re:VIEWによる日本語の技術書の執筆環境です．  
 開発環境とソースコードがこのリポジトリ1つにまとまっているため，すぐに執筆を開始できます．
 
+Dockerイメージ（`ghcr.io/vvakame/review`）と、テンプレート（`articles`）は
+[TechBooster/ReVIEW-Template](https://github.com/TechBooster/ReVIEW-Template)
+から流用しています．
+
 ## 必要なもの
 
 * Git
-* Docker（WindowsまたはMacのDocker DesktopでもOK）
-    * daemon  
-        `docker context`で設定すればリモートのDocker daemonを使うこともできます．
-    * client
-    * Compose  
-    __Composeはclient同梱のCompose V2を使ってください__（別途docker-composeをインストールしている場合はアンインストールしてください．）
+* Docker
 * Visual Studio Code  
     * Dev Containers plugin (`ms-vscode-remote.remote-containers`)
     * （リモートのDocker daemonを使用する場合）Remote - SSH (`ms-vscode-remote.remote-ssh`)
@@ -28,7 +27,7 @@ Re:VIEWによる日本語の技術書の執筆環境です．
 1. `Git: Clone`などで任意のフォルダにダウンロード
 1. `File: Open Folder`でダウンロードした`review-template`フォルダを開く
 1. `Dev Containers: Reopen in Container`でDev Containerを起動
-1. `articles/src.re`を開いて編集  
+1. `articles/article.re`を開いて編集  
   `review: Show preview`コマンドでプレビューを見ながら編集できます．
 1. `Ctrl + Shift + B`または`⌘ + Shift + B`でビルド  
   `articles`ディレクトリ配下に`book.pdf`が生成されます．VSCodeで開くとプレビューできます．
