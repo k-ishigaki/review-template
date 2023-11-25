@@ -8,6 +8,7 @@ plugins:
     - review
 
 rules:
+    no-todo: true
     preset-ja-technical-writing:
         ja-no-mixed-period:
             periodMark: "．"
