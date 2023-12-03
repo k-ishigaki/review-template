@@ -6,7 +6,7 @@
         {
             "label": "Build",
             "type": "shell",
-            "command": "cd articles && rake pdf",
+            "command": "cd articles && rake pdf && gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/default -dNOPAUSE -dBATCH -sOutputFile=book.min.pdf book.pdf",
             "problemMatcher": [],
             "group": {
                 "kind": "build",

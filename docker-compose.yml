@@ -25,6 +25,7 @@ x-common-options: &common-options
                 gh@git
                 git@git
                 git-shell@git
+                gs@review
                 fish@tmux
                 rake@review
                 review-update@review

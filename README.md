@@ -30,7 +30,7 @@ Dockerイメージ（`ghcr.io/vvakame/review`）と、テンプレート（`arti
 1. `articles/article.re`を開いて編集  
   `review: Show preview`コマンドでプレビューを見ながら編集できます．
 1. `Ctrl + Shift + B`または`⌘ + Shift + B`でビルド  
-  `articles`ディレクトリ配下に`book.pdf`が生成されます．VSCodeで開くとプレビューできます．
+  `articles`ディレクトリ配下に`book.pdf`（圧縮なし），`book.min.pdf`（圧縮あり，軽量）が生成されます．VSCodeで開くとプレビューできます．  
 
 ## 構成
 
