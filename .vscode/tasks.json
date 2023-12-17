@@ -6,8 +6,11 @@
         {
             "label": "Build",
             "type": "shell",
-            "command": "cd articles && rake pdf && gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/default -dNOPAUSE -dBATCH -sOutputFile=book.min.pdf book.pdf",
+            "command": "cd articles && rake pdf && gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/default -dNOPAUSE -dBATCH -sOutputFile=book.min.tmp.pdf book.pdf && mv -f book.min.tmp.pdf book.min.pdf",
             "problemMatcher": [],
+            "presentation": {
+                "reveal": "never"
+            },
             "group": {
                 "kind": "build",
                 "isDefault": true
