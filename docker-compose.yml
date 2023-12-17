@@ -2,7 +2,6 @@ version: "3.4"
 
 volumes:
     tmp:
-    vscode-server:
 
 x-common-options: &common-options
     user: ${USER_ID}:${GROUP_ID}
