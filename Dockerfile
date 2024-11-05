@@ -13,9 +13,16 @@ RUN if command -v apk > /dev/null 2>&1; then \
         && apt-get clean && rm -rf /var/lib/apt/lists/*; \
     fi
 
-RUN echo 'developer ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/developer && \
-    groupadd --gid ${GROUP_ID} developer && \
-    useradd --uid ${USER_ID} --gid ${GROUP_ID} -m developer && \
+RUN if [ -z "$(awk -v gid=${GROUP_ID} -F: '$3 == gid {print $1}' /etc/group)" ]; then \
+        groupadd --gid ${GROUP_ID} developer && \
+        echo 'group added'; \
+    fi && \
+    if [ -z "$(awk -v uid=${USER_ID} -F: '$3 == uid {print $1}' /etc/passwd)" ]; then \
+        useradd --uid ${USER_ID} --gid ${GROUP_ID} -m developer && \
+        echo 'user added'; \
+    fi && \
+    user_name="$(awk -v uid=${USER_ID} -F: '$3 == uid {print $1}' /etc/passwd)" && \
+    echo "${user_name} ALL=(ALL) NOPASSWD: ALL" >> "/etc/sudoers.d/${user_name}" && \
     chown -R ${USER_ID}:${GROUP_ID} /root
 
 ENV HOME=/root
