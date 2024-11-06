@@ -14,12 +14,10 @@ RUN if command -v apk > /dev/null 2>&1; then \
     fi
 
 RUN if [ -z "$(awk -v gid=${GROUP_ID} -F: '$3 == gid {print $1}' /etc/group)" ]; then \
-        groupadd --gid ${GROUP_ID} developer && \
-        echo 'group added'; \
+        groupadd --gid ${GROUP_ID} developer; \
     fi && \
     if [ -z "$(awk -v uid=${USER_ID} -F: '$3 == uid {print $1}' /etc/passwd)" ]; then \
-        useradd --uid ${USER_ID} --gid ${GROUP_ID} -m developer && \
-        echo 'user added'; \
+        useradd --uid ${USER_ID} --gid ${GROUP_ID} -m developer; \
     fi && \
     user_name="$(awk -v uid=${USER_ID} -F: '$3 == uid {print $1}' /etc/passwd)" && \
     echo "${user_name} ALL=(ALL) NOPASSWD: ALL" >> "/etc/sudoers.d/${user_name}" && \
